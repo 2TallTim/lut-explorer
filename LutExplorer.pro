@@ -26,11 +26,23 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-        lutfileholder.cpp
+        lutfileholder.cpp \
+    myglwidget.cpp \
+    transform3d.cpp
 
 HEADERS += \
         mainwindow.h \
-        lutfileholder.h
+        lutfileholder.h \
+    myglwidget.h \
+    vertex.h \
+    transform3d.h
 
 FORMS += \
         mainwindow.ui
+
+RESOURCES += \
+    resources.qrc
+
+DISTFILES += \
+    shaders/simple.frag \
+    shaders/simple.vert

@@ -11,9 +11,19 @@
 class LUTFileHolder
 {
 public:
+
+class LUTPoint{
+public:
+    LUTPoint(double fx, double fy, double fz, double tx, double ty, double tz);
+    LUTPoint(std::vector<double> f,std::vector<double> t);
+    double data[6];
+};
+
     LUTFileHolder();
     static void load_file(QString fn);
     static QString get_info_string();
+
+    static std::vector<LUTPoint> get_points();
 private:
     static void read_file(QFile &f);
 

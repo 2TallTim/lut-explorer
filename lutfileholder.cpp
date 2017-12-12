@@ -46,8 +46,11 @@ void LUTFileHolder::read_file(QFile &f){
      * 0:    Header
      * 1:    Body
      */
-
-    while (!in.atEnd()){
+    bool lastLine = false;
+    while (!lastLine){
+        if(in.atEnd()){
+            lastLine = true;
+        }
         if(state==0){
             //Header section
             if(line.startsWith("LUT_3D_SIZE")){
@@ -96,7 +99,8 @@ void LUTFileHolder::read_file(QFile &f){
             else{
                 qDebug() << "unparsed line: \n" << line;
             }
-        }else if(state == 1){
+        }
+        if(state == 1){
             QStringList s = line.split(QRegularExpression("\\s+"));
             std::vector<double> ret;
             ret.push_back(s[0].toDouble());
@@ -119,5 +123,41 @@ QString LUTFileHolder::get_info_string(){
         out += QString::number(spacing[i]) + " ";
     }
 
+    return out;
+}
+
+LUTFileHolder::LUTPoint::LUTPoint(double fx, double fy, double fz, double tx, double ty, double tz){
+    data [0] = fx;
+    data [1] = fy;
+    data [2] = fz;
+    data [3] = tx;
+    data [4] = ty;
+    data [5] = tz;
+}
+
+LUTFileHolder::LUTPoint::LUTPoint(std::vector<double> f, std::vector<double> t){
+    data[0] = f[0];
+    data[1] = f[1];
+    data[2] = f[2];
+    data[3] = t[0];
+    data[4] = t[1];
+    data[5] = t[2];
+}
+
+std::vector<LUTFileHolder::LUTPoint> LUTFileHolder::get_points(){
+    std::vector<LUTPoint> out;
+
+    for(int r = 0; r < lutSize; ++r){
+        for(int g = 0; g < lutSize; ++g){
+            for(int b = 0; b < lutSize; ++b){
+                double fr = spacing[r];
+                double fg = spacing[g];
+                double fb = spacing[b];
+                int idx = b + (g * lutSize) + (r * lutSize * lutSize);
+                std::vector<double> pt = lut[idx];
+                out.push_back(LUTPoint(fr,fg,fb,pt[0],pt[1],pt[2]));
+            }
+        }
+    }
     return out;
 }
